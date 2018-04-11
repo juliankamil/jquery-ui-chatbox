@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+        <title>jquery-ui-chatbox</title>
+        <link   rel="stylesheet"       href="css/jquery-ui.css" type="text/css" media="screen" />
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/jquery-ui.js"></script>
+        <link   type="text/css"        href="css/jquery-ui-chatbox.css" rel="stylesheet" />
+        <script type="text/javascript" src="js/jquery-ui-chatbox.js"></script>
+        <script type="text/javascript" src="js/jquery-ui-chatbox-manager.js"></script>
+    <style type="text/css" media="screen">
+      body {
+      font-size: 12pt;
+      font-family: Arial,sans-serif;
+      }
+      p {
+      width:800px;
+      }
+      a {
+      text-decoration: none;
+      }
+    </style>
+    <script type="text/javascript">
+      $(document).ready(function(){
+
+      var counter = 0;
+      var idList = new Array();
+
+      var broadcastMessageCallback = function(from, msg) {
+          for(var i = 0; i < idList.length; i ++) {
+              chatboxManager.addBox(idList[i]);
+              $("#" + idList[i]).chatbox("option", "boxManager").addMsg(from, msg);
+          }
+      }
+
+
+      // chatboxManager is excerpt from the original project
+      // the code is not very clean, I just want to reuse it to manage multiple chatboxes
+      chatboxManager.init({messageSent : broadcastMessageCallback});
+
+      $("#link_add").click(function(event, ui) {
+          counter ++;
+          var id = "box" + counter;
+          idList.push(id);
+          chatboxManager.addBox(id, 
+                                  {dest:"dest" + counter, // not used in demo
+                                   title:"box" + counter,
+                                   first_name:"First" + counter,
+                                   last_name:"Last" + counter
+                                   //you can add your own options too
+                                  });
+          event.preventDefault();
+      });
+
+      });
+    </script>
+  </head>
+  <body>
+    <h1>jQuery UI Chatbox Plugin</h1>
+
+    <p><a href="http://github.com/dexterpu/jquery.ui.chatbox">Souce code</a></p>
+    
+    <p>This is a jQuery UI plugin I wrote as part of a data collection
+    tool for the social network analysis project I've been working on,
+    in which this plugin serves as the front end of a simple Comet
+    chat server. It is a pure UI plugin so you can easily plug it into
+    whatever communication protocol of your choice, some may find this
+    useful.</p>
+
+    <p>It works with jQuery 1.4.2 and jQuery UI 1.8.2, which can be
+    get from <a href="http://jqueryui.com/">here</a>.</p>
+
+    <p><b>The plugin is tested on Firefox and Safari. It works on IE too,
+    but with a defaced UI and the missing "close" icon.</b> I will try to
+    fix this issue in the future.</p>
+
+
+    <p>To see an in-page demo, click the following link:</p>
+    <p><a id="link_add" href="#">Add Chatbox</a></p>
+    <p>You can add multiple chat boxes, and the default behavior is to
+    broadcast messages to all other boxes.</p>
+
+
+    <h2>Document</h2>
+
+    <p>I assume the basics of javascript, HTML, jQuery and jQuery UI,
+    here are the few options you can customize for your chat box:</p>
+    <pre>
+      	options: {
+	    id: null, //id for the DOM element
+	    title: null, // title of the chatbox
+	    user: null, // can be anything associated with this chatbox
+	    hidden: false, // show or hide the chatbox
+	    offset: 0, // relative to right edge of the browser window
+	    width: 230, // width of the chatbox
+	    messageSent: function(id, user, msg){
+		// override this
+		this.boxManager.addMsg(user.first_name, msg);
+	    },
+	    boxClosed: function(id) {}, // called when the close icon is clicked
+	    ...
+        }
+    </pre>
+    <p>To create a chatbox at the bottom of the browser window with an
+    offset of 200px to the right edge, use the following code:</p>
+
+    <pre>
+      $(document).ready(function(){
+          // to create
+          $("#chat_div").chatbox({id : "chat_div",
+                                  title : "Title",
+                                  user : "can be anything"
+                                  offset: 200,
+                                  messageSent: function(id, user, msg){
+                                       alert("DOM " + id + " just typed in " + msg);
+                                  }});
+          // to insert a message
+          $("#chat_div").chatbox("option", "boxManager").addMsg("Mr. Foo", "Barrr!");
+      });
+    </pre>
+
+    <p>Use the following standard jQuery UI approach to access the
+    options after the chat box is created:</p>
+
+    <pre>
+      ...
+      // getter
+      var offset = $("#chat_div").chatbox("option", "offset");
+      
+      // setter, to change the possition of the chatbox
+      $("#chat_div").chatbox("option", "offset", 300);
+      ...
+    </pre>
+
+    <p>To change the look and feel of the chatbox, try applying different <a href="http://jqueryui.com/themeroller/">jQuery UI themems</a>.</p>
+
+    <h2>License</h2>
+    
+    <p>As other jQuery UI components, this plugin is dual licensed
+    under MIT and GPL v2
+    licenses. <a href="http://jquery.org/license">License</a></p>
+
+    <hr />
+    <address>Last updated by Wen (Febrary 28, 2011)<address>
+    <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+      try {
+      var pageTracker = _gat._getTracker("UA-1782416-2");
+      pageTracker._trackPageview();
+      } catch(err) {}
+    </script>
+
+  </body>
+</html>
